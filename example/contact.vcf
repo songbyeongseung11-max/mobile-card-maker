@@ -1,0 +1,24 @@
+BEGIN:VCARD
+
+VERSION:3.0
+
+N:김하나;;;;
+
+FN:김하나
+
+ORG:하나 플라워 스튜디오 (HANA FLOWER STUDIO)
+
+TITLE:플로리스트
+
+TEL;TYPE=CELL,VOICE:010-0000-0000
+
+EMAIL;TYPE=INTERNET:hello@example.com
+
+URL:https://songbyeongseung11-max.github.io/mobile-card-maker/example
+
+URL:https://www.instagram.com/
+
+URL:https://example.com/
+
+END:VCARD
+
