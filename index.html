@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모바일 명함 메이커</title>
+<meta name="description" content="이름과 번호만 넣으면 카톡으로 보내는 모바일 명함을 만들어 줍니다. 연락처 저장 버튼, 카카오톡 공유 버튼 포함.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{--bg:#F2EDE1;--paper:#FBF8F2;--ink:#1A1818;--sub:#6F6962;--line:#E3DCCF;--accent:#E6483A}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,'Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:32px 16px 64px;display:grid;grid-template-columns:1fr 380px;gap:28px;align-items:start}
+  header{grid-column:1/-1}
+  h1{font-size:28px;margin:0 0 6px}
+  .lead{margin:0;color:var(--sub);line-height:1.6}
+  form{background:var(--paper);border-radius:18px;padding:24px;display:grid;gap:16px}
+  fieldset{border:0;padding:0;margin:0;display:grid;gap:12px}
+  legend{font-weight:700;font-size:15px;margin-bottom:6px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  label{display:grid;gap:6px;font-size:13px;color:var(--sub)}
+  input,textarea{font:inherit;font-size:15px;color:var(--ink);padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;width:100%}
+  input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+  textarea{min-height:96px;resize:vertical}
+  input[type=color]{padding:4px;height:44px}
+  .hint{font-size:12px;color:var(--sub);line-height:1.5}
+  .btn{font:inherit;font-weight:700;font-size:16px;height:54px;border:0;border-radius:14px;background:var(--accent);color:#fff;cursor:pointer}
+  .btn:disabled{opacity:.5}
+  .preview{position:sticky;top:16px}
+  .preview iframe{width:100%;height:760px;border:0;border-radius:24px;background:#fff;box-shadow:0 12px 32px rgba(60,40,20,.12)}
+  .steps{background:var(--paper);border-radius:18px;padding:20px 24px;line-height:1.8;font-size:14px}
+  .steps ol{margin:6px 0 0;padding-left:20px}
+  @media (max-width:860px){.wrap{grid-template-columns:1fr}.preview{position:static}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>모바일 명함 메이커</h1>
+    <p class="lead">정보를 넣고 <b>명함 파일 받기</b>를 누르면, 인터넷에 올리기만 하면 되는 모바일 명함이 zip 파일로 만들어져요.<br>받는 사람은 링크를 눌러 <b>연락처 저장 · 전화 · 문자</b>를 바로 할 수 있어요.</p>
+  </header>
+
+  <form id="f" autocomplete="off">
+    <fieldset>
+      <legend>기본 정보</legend>
+      <div class="row">
+        <label>이름 *<input id="name" required value="홍길동"></label>
+        <label>직함<input id="title" value="대표"></label>
+      </div>
+      <div class="row">
+        <label>회사 이름 *<input id="company" required value="우리 회사"></label>
+        <label>영문 이름 (선택)<input id="companyEn" value="OUR COMPANY"></label>
+      </div>
+      <div class="row">
+        <label>휴대폰 번호 *<input id="phone" required inputmode="tel" value="010-1234-5678"></label>
+        <label>이메일 (선택)<input id="email" type="email" value=""></label>
+      </div>
+      <label>인사말 (줄바꿈 그대로 보여요)<textarea id="greeting">안녕하세요.
+함께하는 모든 순간을
+진심을 다해 만들겠습니다.</textarea></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>디자인</legend>
+      <div class="row">
+        <label>포인트 색<input id="accent" type="color" value="#E6483A"></label>
+        <label>배경 색<input id="bg" type="color" value="#F2EDE1"></label>
+      </div>
+      <label>로고 이미지 (선택, PNG 권장)<input id="logo" type="file" accept="image/*"></label>
+      <label>카톡 미리보기 이미지 (선택, 1200×630 권장)<input id="share" type="file" accept="image/*"></label>
+      <p class="hint">미리보기 이미지가 없으면 로고가 대신 쓰여요. 둘 다 없으면 글자만 있는 명함이 돼요.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>인터넷 주소 · 카카오톡 공유 (선택)</legend>
+      <label>올릴 주소<input id="site" placeholder="https://내이름.netlify.app"></label>
+      <p class="hint">카톡 미리보기 이미지가 뜨려면 주소가 필요해요. 처음엔 비워 두고 올린 뒤 주소를 넣어 한 번 더 만들어도 돼요.</p>
+      <label>카카오 JavaScript 키<input id="kakao" placeholder="카카오 디벨로퍼스 → 앱 → 플랫폼 키"></label>
+      <p class="hint">넣으면 노란 '카카오톡으로 명함 보내기' 버튼이 생겨요. 카카오 디벨로퍼스에 위 주소를 등록해야 동작해요. (README 참고)</p>
+    </fieldset>
+
+    <button class="btn" id="go" type="submit">명함 파일 받기 (zip)</button>
+  </form>
+
+  <aside class="preview">
+    <iframe id="pv" title="미리보기"></iframe>
+    <div class="steps">
+      <b>받은 다음에</b>
+      <ol>
+        <li>zip 파일 압축을 풀어요.</li>
+        <li><a href="https://app.netlify.com/drop" target="_blank" rel="noopener">Netlify Drop</a>에 폴더째 끌어다 놓아요.</li>
+        <li>생긴 주소를 카톡으로 보내면 끝!</li>
+      </ol>
+    </div>
+  </aside>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var files = { logo: null, share: null };
+
+  function esc(s){ return String(s||'').replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function digits(s){ return String(s||'').replace(/[^0-9+]/g,''); }
+  function vEsc(s){ return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n'); }
+  function data(){
+    var site = $('site').value.trim().replace(/\/+$/,'');
+    return {
+      name: $('name').value.trim(), title: $('title').value.trim(),
+      company: $('company').value.trim(), companyEn: $('companyEn').value.trim(),
+      phone: $('phone').value.trim(), email: $('email').value.trim(),
+      greeting: $('greeting').value.trim(), accent: $('accent').value, bg: $('bg').value,
+      site: site, kakao: $('kakao').value.trim()
+    };
+  }
+  function ext(file){ var m = /\.(png|jpe?g|gif|webp|svg)$/i.exec(file ? file.name : ''); return m ? m[1].toLowerCase().replace('jpeg','jpg') : 'png'; }
+
+  // 명함 페이지 HTML 만들기 (미리보기에서는 이미지를 data URL로 넣음)
+  function buildHTML(d, imgs){
+    var tel = digits(d.phone);
+    var shareImg = imgs.share || imgs.logo || '';
+    var ogImage = (d.site && shareImg && !/^data:/.test(shareImg)) ? d.site + '/' + shareImg : '';
+    var greeting = esc(d.greeting).replace(/\n/g,'<br>\n      ');
+    var title = esc(d.company + ' · ' + d.name + (d.title ? ' ' + d.title : ''));
+    var kakaoBlock = d.kakao ? [
+      '<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" crossorigin="anonymous"><\/script>',
+      '<script>',
+      '  (function(){',
+      '    var SITE = ' + JSON.stringify(d.site || '') + ' || location.origin;',
+      '    var btn = document.getElementById("kakaoShare");',
+      '    try { if (window.Kakao && !Kakao.isInitialized()) Kakao.init(' + JSON.stringify(d.kakao) + '); } catch (e) {}',
+      '    btn.addEventListener("click", function(){',
+      '      if (!window.Kakao || !Kakao.isInitialized()) { alert("카카오톡 공유를 불러오지 못했어요. 주소를 직접 보내 주세요."); return; }',
+      '      Kakao.Share.sendDefault({',
+      '        objectType: "feed",',
+      '        content: { title: ' + JSON.stringify(d.company + ' · ' + d.name + (d.title ? ' ' + d.title : '')) + ', description: "눌러서 연락처를 저장하세요.",',
+      (shareImg ? '          imageUrl: SITE + "/' + shareImg + '",' : ''),
+      '          link: { mobileWebUrl: SITE, webUrl: SITE } },',
+      '        buttons: [',
+      '          { title: "모바일 명함 보기", link: { mobileWebUrl: SITE, webUrl: SITE } },',
+      '          { title: "연락처 저장", link: { mobileWebUrl: SITE + "/contact.vcf", webUrl: SITE + "/contact.vcf" } }',
+      '        ]',
+      '      });',
+      '    });',
+      '  })();',
+      '<\/script>'
+    ].filter(Boolean).join('\n') : '';
+
+    return [
+'<!doctype html>',
+'<html lang="ko">',
+'<head>',
+'<meta charset="utf-8">',
+'<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">',
+'<title>' + title + '</title>',
+'<meta name="description" content="' + esc(d.company) + ' ' + esc(d.name) + '의 모바일 명함입니다.">',
+'<meta property="og:type" content="website">',
+(d.site ? '<meta property="og:url" content="' + esc(d.site) + '/">' : ''),
+'<meta property="og:title" content="' + title + '">',
+'<meta property="og:description" content="눌러서 연락처를 저장하세요.">',
+(ogImage ? '<meta property="og:image" content="' + esc(ogImage) + '">' : ''),
+'<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">',
+'<style>',
+'  :root{--bg:' + d.bg + ';--paper:#FFFFFFE6;--ink:#1A1818;--sub:#6F6962;--line:#00000014;--accent:' + d.accent + '}',
+'  *{box-sizing:border-box;margin:0;padding:0}',
+'  html,body{background:var(--bg)}',
+'  body{font-family:Pretendard,"Malgun Gothic",-apple-system,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}',
+'  .wrap{max-width:440px;margin:0 auto;padding:28px 20px 40px}',
+'  .card{background:var(--paper);border-radius:22px;padding:28px 24px 26px;box-shadow:0 12px 32px rgba(60,40,20,.08)}',
+'  .logo{display:block;max-width:78%;max-height:240px;margin:0 auto 6px}',
+'  .company{text-align:center;font-size:22px;font-weight:700;letter-spacing:.04em}',
+'  .company small{display:block;margin-top:6px;font-size:11px;font-weight:600;letter-spacing:.3em;color:var(--accent)}',
+'  .greet{margin:22px 4px 24px;font-size:15px;line-height:1.75;color:#3A3633;text-align:center;word-break:keep-all}',
+'  .person{border-top:1px solid var(--line);padding-top:22px;text-align:center}',
+'  .name{font-size:26px;font-weight:700;letter-spacing:.08em}',
+'  .title{margin-top:6px;font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.12em}',
+'  .phone{display:inline-block;margin-top:16px;font-size:19px;font-weight:600;color:var(--ink);text-decoration:none;letter-spacing:.03em}',
+'  .mail{display:block;margin-top:8px;font-size:15px;color:var(--ink);text-decoration:none;word-break:break-all}',
+'  .actions{margin-top:22px;display:grid;gap:10px}',
+'  .btn{display:flex;align-items:center;justify-content:center;height:54px;border-radius:14px;font-size:16px;font-weight:700;text-decoration:none;border:0;font-family:inherit;cursor:pointer;width:100%}',
+'  .primary{background:var(--accent);color:#fff}',
+'  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
+'  .ghost{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}',
+'  .kakao{background:#FEE500;color:#191919}',
+'  .foot{text-align:center;margin-top:26px;font-size:12px;color:var(--sub);letter-spacing:.2em}',
+'</style>',
+'</head>',
+'<body>',
+'<main class="wrap">',
+'  <section class="card">',
+(imgs.logo ? '    <img class="logo" src="' + imgs.logo + '" alt="' + esc(d.company) + ' 로고">'
+           : '    <p class="company">' + esc(d.company) + (d.companyEn ? '<small>' + esc(d.companyEn) + '</small>' : '') + '</p>'),
+(d.greeting ? '    <p class="greet">\n      ' + greeting + '\n    </p>' : ''),
+'    <div class="person">',
+'      <div class="name">' + esc(d.name) + '</div>',
+(d.title ? '      <div class="title">' + esc(d.title) + '</div>' : ''),
+'      <a class="phone" href="tel:' + tel + '">' + esc(d.phone) + '</a>',
+(d.email ? '      <a class="mail" href="mailto:' + esc(d.email) + '">' + esc(d.email) + '</a>' : ''),
+'    </div>',
+'    <div class="actions">',
+'      <a class="btn primary" href="contact.vcf" download="' + esc(d.name) + '.vcf">연락처 저장하기</a>',
+'      <div class="row">',
+'        <a class="btn ghost" href="tel:' + tel + '">전화하기</a>',
+'        <a class="btn ghost" href="sms:' + tel + '">문자하기</a>',
+'      </div>',
+(d.kakao ? '      <button class="btn kakao" id="kakaoShare" type="button">카카오톡으로 명함 보내기</button>' : ''),
+'    </div>',
+'  </section>',
+'  <p class="foot">' + esc(d.companyEn || d.company) + '</p>',
+'</main>',
+kakaoBlock,
+'</body>',
+'</html>'
+    ].filter(function(l){ return l !== ''; }).join('\n') + '\n';
+  }
+
+  function buildVCF(d){
+    var parts = d.name.split(' ');
+    var lines = ['BEGIN:VCARD','VERSION:3.0',
+      'N:' + vEsc(d.name) + ';;;;', 'FN:' + vEsc(d.name),
+      'ORG:' + vEsc(d.company + (d.companyEn ? ' (' + d.companyEn + ')' : ''))];
+    if (d.title) lines.push('TITLE:' + vEsc(d.title));
+    lines.push('TEL;TYPE=CELL,VOICE:' + d.phone);
+    if (d.email) lines.push('EMAIL;TYPE=INTERNET:' + d.email);
+    if (d.site) lines.push('URL:' + d.site);
+    lines.push('END:VCARD');
+    return lines.join('\r\n') + '\r\n';
+  }
+
+  var HEADERS = '/contact.vcf\n  Content-Type: text/vcard; charset=utf-8\n  Content-Disposition: attachment; filename="contact.vcf"\n';
+
+  function readURL(file){ return new Promise(function(res){ if (!file) return res(null); var r = new FileReader(); r.onload = function(){ res(r.result); }; r.readAsDataURL(file); }); }
+
+  var previewURLs = { logo: null, share: null };
+  function refresh(){
+    var d = data();
+    $('pv').srcdoc = buildHTML(d, { logo: previewURLs.logo, share: null });
+  }
+  ['logo','share'].forEach(function(k){
+    $(k).addEventListener('change', function(){ files[k] = this.files[0] || null; readURL(files[k]).then(function(u){ previewURLs[k] = u; refresh(); }); });
+  });
+  document.querySelectorAll('#f input:not([type=file]), #f textarea').forEach(function(el){ el.addEventListener('input', refresh); });
+  refresh();
+
+  $('f').addEventListener('submit', function(e){
+    e.preventDefault();
+    var d = data();
+    if (!d.name || !d.phone || !d.company) return;
+    var zip = new JSZip(), folder = zip.folder('mobile-card');
+    var imgs = {};
+    if (files.logo) { imgs.logo = 'img/logo.' + ext(files.logo); folder.file(imgs.logo, files.logo); }
+    if (files.share) { imgs.share = 'img/share.' + ext(files.share); folder.file(imgs.share, files.share); }
+    folder.file('index.html', buildHTML(d, imgs));
+    folder.file('contact.vcf', buildVCF(d));
+    folder.file('_headers', HEADERS);
+    $('go').disabled = true;
+    zip.generateAsync({ type: 'blob' }).then(function(blob){
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = 'mobile-card.zip';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); $('go').disabled = false; }, 1500);
+    });
+  });
+})();
+</script>
+</body>
+</html>
