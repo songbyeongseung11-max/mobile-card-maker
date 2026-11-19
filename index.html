@@ -4,17 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>모바일 명함 메이커</title>
-<meta name="description" content="이름과 번호만 넣으면 카톡으로 보내는 모바일 명함을 만들어 줍니다. 프로필 사진, 사진 갤러리, 인스타·홈페이지 링크, 연락처 저장, 카카오톡 공유 버튼 포함.">
+<meta name="description" content="이름과 번호만 넣으면 카톡으로 보내는 모바일 명함을 만들어 줍니다. 로고, 프로필 사진, 연락처 목록, SNS 아이콘, 사진 갤러리, 연락처 저장, 카카오톡 공유 버튼 포함.">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
-  :root{--bg:#F2EDE1;--paper:#FBF8F2;--ink:#1A1818;--sub:#6F6962;--line:#E3DCCF;--accent:#E6483A}
+  :root{--bg:#EEF1F6;--paper:#FFFFFF;--ink:#16181D;--sub:#626875;--line:#DDE2EA;--accent:#1E4E9C}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,'Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased}
   .wrap{max-width:1040px;margin:0 auto;padding:32px 16px 64px;display:grid;grid-template-columns:1fr 380px;gap:28px;align-items:start}
   header{grid-column:1/-1}
   h1{font-size:28px;margin:0 0 6px}
   .lead{margin:0;color:var(--sub);line-height:1.6}
+  .lead a{color:var(--accent)}
   form{background:var(--paper);border-radius:18px;padding:24px;display:grid;gap:22px}
   fieldset{border:0;padding:0;margin:0;display:grid;gap:12px}
   legend{font-weight:700;font-size:15px;margin-bottom:6px}
@@ -23,13 +24,13 @@
   label{display:grid;gap:6px;font-size:13px;color:var(--sub)}
   input,textarea{font:inherit;font-size:15px;color:var(--ink);padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;width:100%}
   input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
-  textarea{min-height:96px;resize:vertical}
+  textarea{min-height:84px;resize:vertical}
   input[type=color]{padding:4px;height:44px}
   .hint{font-size:12px;color:var(--sub);line-height:1.5;margin:0}
   .btn{font:inherit;font-weight:700;font-size:16px;height:54px;border:0;border-radius:14px;background:var(--accent);color:#fff;cursor:pointer}
   .btn:disabled{opacity:.5}
   .preview{position:sticky;top:16px}
-  .preview iframe{width:100%;height:760px;border:0;border-radius:24px;background:#fff;box-shadow:0 12px 32px rgba(60,40,20,.12)}
+  .preview iframe{width:100%;height:780px;border:0;border-radius:24px;background:#fff;box-shadow:0 12px 32px rgba(20,30,60,.14)}
   .steps{background:var(--paper);border-radius:18px;padding:20px 24px;line-height:1.8;font-size:14px;margin-top:16px}
   .steps ol{margin:6px 0 0;padding-left:20px}
   @media (max-width:860px){.wrap{grid-template-columns:1fr}.preview{position:static}.row,.row3{grid-template-columns:1fr}}
@@ -39,7 +40,8 @@
 <div class="wrap">
   <header>
     <h1>모바일 명함 메이커</h1>
-    <p class="lead">정보를 넣고 <b>명함 파일 받기</b>를 누르면, 인터넷에 올리기만 하면 되는 모바일 명함이 zip 파일로 만들어져요.<br>받는 사람은 링크를 눌러 <b>연락처 저장 · 전화 · 문자 · 인스타 · 사진 보기</b>를 바로 할 수 있어요.</p>
+    <p class="lead">정보를 넣고 <b>명함 파일 받기</b>를 누르면, 인터넷에 올리기만 하면 되는 모바일 명함이 zip 파일로 만들어져요.
+      <a href="example/" target="_blank" rel="noopener">완성 예시 보기 →</a></p>
   </header>
 
   <form id="f" autocomplete="off">
@@ -51,48 +53,59 @@
       </div>
       <div class="row">
         <label>회사 이름 *<input id="company" required value="우리 회사"></label>
-        <label>영문 이름 (선택)<input id="companyEn" value="OUR COMPANY"></label>
+        <label>지점 · 부서 · 영문 이름 (선택)<input id="companyEn" value="서울 본점"></label>
       </div>
+      <label>인사말 (선택, 줄바꿈 그대로 보여요)<textarea id="greeting">함께하는 모든 순간을 진심을 다해 만들겠습니다.</textarea></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>연락처</legend>
       <div class="row">
         <label>휴대폰 번호 *<input id="phone" required inputmode="tel" value="010-1234-5678"></label>
-        <label>이메일 (선택)<input id="email" type="email" value=""></label>
+        <label>대표 · 사무실 전화 (선택)<input id="office" inputmode="tel" value="02-1234-5678"></label>
       </div>
-      <label>인사말 (줄바꿈 그대로 보여요)<textarea id="greeting">안녕하세요.
-함께하는 모든 순간을
-진심을 다해 만들겠습니다.</textarea></label>
+      <div class="row">
+        <label>팩스 (선택)<input id="fax" inputmode="tel" value=""></label>
+        <label>이메일 (선택)<input id="email" type="email" value="hello@example.com"></label>
+      </div>
+      <label>주소 (선택, 누르면 지도가 열려요)<input id="address" value="서울시 중구 세종대로 110"></label>
     </fieldset>
 
     <fieldset>
       <legend>사진</legend>
+      <label>로고 이미지 (선택, 맨 위에 들어가요)<input id="logo" type="file" accept="image/*"></label>
       <label>내 사진 (선택, 동그랗게 보여요)<input id="photo" type="file" accept="image/*"></label>
       <label>사진 갤러리 (선택, 최대 10장)<input id="gallery" type="file" accept="image/*" multiple></label>
-      <p class="hint">행사 · 작업 · 매장 사진을 넣으면 옆으로 넘겨 보는 갤러리가 생기고, 누르면 크게 보여요. 사진은 휴대폰에서 빨리 열리도록 자동으로 줄여서 넣어요.</p>
+      <p class="hint">사진은 휴대폰에서 빨리 열리도록 자동으로 줄여서 넣어요. 갤러리는 옆으로 넘겨 보고 누르면 크게 보여요.</p>
     </fieldset>
 
     <fieldset>
-      <legend>바로가기 링크 (선택)</legend>
+      <legend>SNS · 링크 (선택, 아이콘으로 보여요)</legend>
       <div class="row">
         <label>인스타그램 아이디 또는 주소<input id="instagram" placeholder="@my_company"></label>
+        <label>네이버 블로그 주소<input id="blog" placeholder="blog.naver.com/아이디"></label>
+      </div>
+      <div class="row">
+        <label>유튜브 주소<input id="youtube" placeholder="youtube.com/@채널"></label>
         <label>홈페이지 주소<input id="homepage" placeholder="https://..."></label>
       </div>
       <div class="row3">
-        <label>링크 이름 1<input id="l1label" placeholder="행사 안내문"></label>
-        <label>링크 주소 1<input id="l1url" placeholder="https://..."></label>
+        <label>추가 링크 이름<input id="l1label" placeholder="행사 안내문"></label>
+        <label>추가 링크 주소<input id="l1url" placeholder="https://..."></label>
       </div>
       <div class="row3">
-        <label>링크 이름 2<input id="l2label" placeholder="유튜브 · 블로그 · 예약"></label>
-        <label>링크 주소 2<input id="l2url" placeholder="https://..."></label>
+        <label>추가 링크 이름<input id="l2label" placeholder="예약하기"></label>
+        <label>추가 링크 주소<input id="l2url" placeholder="https://..."></label>
       </div>
-      <p class="hint">행사 안내문, 포트폴리오, 유튜브, 블로그, 예약 페이지처럼 보여 주고 싶은 곳을 넣어요. 주소가 있는 것만 버튼으로 나와요.</p>
+      <p class="hint">SNS는 동그란 아이콘으로, 추가 링크는 버튼으로 나와요. 주소를 넣은 것만 보여요.</p>
     </fieldset>
 
     <fieldset>
       <legend>디자인</legend>
       <div class="row">
-        <label>포인트 색<input id="accent" type="color" value="#E6483A"></label>
-        <label>배경 색<input id="bg" type="color" value="#F2EDE1"></label>
+        <label>대표 색 (아래 배경)<input id="accent" type="color" value="#1E4E9C"></label>
+        <label>바깥 배경 색<input id="bg" type="color" value="#EEF1F6"></label>
       </div>
-      <label>로고 이미지 (선택, PNG 권장)<input id="logo" type="file" accept="image/*"></label>
       <label>카톡 미리보기 이미지 (선택, 1200×630 권장)<input id="share" type="file" accept="image/*"></label>
       <p class="hint">미리보기 이미지가 없으면 로고, 그다음 내 사진이 대신 쓰여요.</p>
     </fieldset>
@@ -102,7 +115,7 @@
       <label>올릴 주소<input id="site" placeholder="https://내이름.netlify.app"></label>
       <p class="hint">카톡 미리보기 이미지가 뜨려면 주소가 필요해요. 처음엔 비워 두고 올린 뒤 주소를 넣어 한 번 더 만들어도 돼요.</p>
       <label>카카오 JavaScript 키<input id="kakao" placeholder="카카오 디벨로퍼스 → 앱 → 플랫폼 키"></label>
-      <p class="hint">넣으면 노란 '카카오톡으로 명함 보내기' 버튼이 생겨요. 카카오 디벨로퍼스에 위 주소를 등록해야 동작해요. (README 참고)</p>
+      <p class="hint">넣으면 맨 위 카카오톡 아이콘으로 명함을 카드처럼 보낼 수 있어요. 카카오 디벨로퍼스에 위 주소를 등록해야 동작해요. (README 참고)</p>
     </fieldset>
 
     <button class="btn" id="go" type="submit">명함 파일 받기 (zip)</button>
@@ -124,7 +137,6 @@
 <script>
 (function(){
   var $ = function(id){ return document.getElementById(id); };
-  // 원본 파일과 줄인 이미지(미리보기용 data URL + zip용 Blob)
   var img = { logo: null, share: null, photo: null, gallery: [] };
 
   function esc(s){ return String(s||'').replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -137,23 +149,24 @@
     return 'https://www.instagram.com/' + s.replace(/^@/,'').replace(/\/+$/,'') + '/';
   }
   function data(){
+    var sns = [];
+    var ig = insta($('instagram').value); if (ig) sns.push({ kind: 'ig', label: '인스타그램', url: ig });
+    var bl = url($('blog').value);        if (bl) sns.push({ kind: 'blog', label: '블로그', url: bl });
+    var yt = url($('youtube').value);     if (yt) sns.push({ kind: 'yt', label: '유튜브', url: yt });
+    var hp = url($('homepage').value);    if (hp) sns.push({ kind: 'web', label: '홈페이지', url: hp });
     var links = [];
-    var ig = insta($('instagram').value); if (ig) links.push({ label: '인스타그램', url: ig, kind: 'ig' });
-    var hp = url($('homepage').value);     if (hp) links.push({ label: '홈페이지', url: hp, kind: 'web' });
-    [['l1label','l1url'],['l2label','l2url']].forEach(function(p){
-      var u = url($(p[1]).value); if (u) links.push({ label: $(p[0]).value.trim() || '바로가기', url: u, kind: 'link' });
-    });
+    [['l1label','l1url'],['l2label','l2url']].forEach(function(p){ var u = url($(p[1]).value); if (u) links.push({ label: $(p[0]).value.trim() || '바로가기', url: u }); });
     return {
       name: $('name').value.trim(), title: $('title').value.trim(),
       company: $('company').value.trim(), companyEn: $('companyEn').value.trim(),
-      phone: $('phone').value.trim(), email: $('email').value.trim(),
+      phone: $('phone').value.trim(), office: $('office').value.trim(), fax: $('fax').value.trim(),
+      email: $('email').value.trim(), address: $('address').value.trim(),
       greeting: $('greeting').value.trim(), accent: $('accent').value, bg: $('bg').value,
       site: $('site').value.trim().replace(/\/+$/,''), kakao: $('kakao').value.trim(),
-      links: links
+      homepage: hp, sns: sns, links: links
     };
   }
 
-  // 이미지 줄이기: 긴 변을 max px 이하로, JPEG(로고만 PNG 유지)
   function shrink(file, max, keepPng){
     return new Promise(function(res){
       if (!file) return res(null);
@@ -169,7 +182,7 @@
           x.drawImage(im, 0, 0, c.width, c.height);
           var type = png ? 'image/png' : 'image/jpeg';
           var durl = c.toDataURL(type, 0.84);
-          c.toBlob(function(b){ res({ dataURL: durl, blob: b, ext: png ? 'png' : 'jpg', w: c.width, h: c.height }); }, type, 0.84);
+          c.toBlob(function(b){ res({ dataURL: durl, blob: b, ext: png ? 'png' : 'jpg' }); }, type, 0.84);
         };
         im.onerror = function(){ res(null); };
         im.src = fr.result;
@@ -178,70 +191,95 @@
     });
   }
 
-  var ICON = {
-    ig: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
+  // 아이콘 (선 아이콘은 currentColor, SNS 타일은 고유 색)
+  var I = {
+    phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>',
+    office: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h2"/></svg>',
+    fax: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/></svg>',
+    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+    pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
     web: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
-    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>'
+    save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>',
+    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
+    share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4M12 2v14"/></svg>',
+    kakao: '<svg viewBox="0 0 24 24"><path fill="#191919" d="M12 4C7 4 3 7.2 3 11.1c0 2.5 1.7 4.7 4.2 6l-.9 3.3c-.1.3.2.5.5.4l3.9-2.6c.4 0 .9.1 1.3.1 5 0 9-3.2 9-7.2S17 4 12 4z"/></svg>',
+    ig: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.6"/><circle cx="16.8" cy="7.2" r="1" fill="#fff" stroke="none"/></svg>',
+    blog: '<svg viewBox="0 0 24 24"><text x="12" y="16.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10.5" font-weight="900" fill="#fff">blog</text></svg>',
+    yt: '<svg viewBox="0 0 24 24"><path fill="#fff" d="M10 8.5v7l6-3.5z"/></svg>'
   };
+  var TILE = { ig: 'background:linear-gradient(45deg,#F9CE34,#EE2A7B 55%,#6228D7)', blog: 'background:#03C75A', yt: 'background:#FF0033', web: 'background:#fff;color:var(--accent)' };
 
-  // 명함 페이지 HTML. src = { logo, share, photo, gallery[] } 각 이미지 경로(또는 미리보기용 data URL)
   function buildHTML(d, src){
     var tel = digits(d.phone);
     var shareImg = src.share || src.logo || src.photo || '';
     var ogImage = (d.site && shareImg && !/^data:/.test(shareImg)) ? d.site + '/' + shareImg : '';
-    var greeting = esc(d.greeting).replace(/\n/g,'<br>\n      ');
     var titleText = d.company + ' · ' + d.name + (d.title ? ' ' + d.title : '');
     var title = esc(titleText);
+
+    // 맨 위 공유 아이콘 줄
+    var topIcons = [
+      d.kakao ? '<button class="ti kakao" id="kakaoShare" type="button" aria-label="카카오톡으로 보내기">' + I.kakao + '</button>' : '',
+      '<a class="ti" href="contact.vcf" download="' + esc(d.name) + '.vcf" aria-label="연락처 저장">' + I.save + '</a>',
+      '<button class="ti" id="shareBtn" type="button" aria-label="링크 공유">' + I.share + '</button>'
+    ].filter(Boolean).join('');
+
+    // 연락처 목록
+    var rows = [];
+    if (d.office) rows.push('<a class="info" href="tel:' + digits(d.office) + '">' + I.office + '<span>' + esc(d.office) + '</span></a>');
+    if (d.fax) rows.push('<div class="info">' + I.fax + '<span>' + esc(d.fax) + ' (팩스)</span></div>');
+    if (d.email) rows.push('<a class="info" href="mailto:' + esc(d.email) + '">' + I.mail + '<span>' + esc(d.email) + '</span></a>');
+    if (d.address) rows.push('<a class="info" href="https://map.naver.com/p/search/' + encodeURIComponent(d.address) + '" target="_blank" rel="noopener">' + I.pin + '<span>' + esc(d.address) + '</span></a>');
+    if (d.homepage) rows.push('<a class="info" href="' + esc(d.homepage) + '" target="_blank" rel="noopener">' + I.web + '<span>' + esc(d.homepage.replace(/^https?:\/\//,'').replace(/\/$/,'')) + '</span></a>');
+
+    var snsRow = d.sns.length ? '<div class="sns">' + d.sns.map(function(s){
+      return '<a class="sn" href="' + esc(s.url) + '" target="_blank" rel="noopener" aria-label="' + s.label + '"><i style="' + TILE[s.kind] + '">' + I[s.kind] + '</i><b>' + s.label + '</b></a>';
+    }).join('') + '</div>' : '';
+    var linkBtns = d.links.map(function(l){ return '<a class="btn line" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + I.link + esc(l.label) + '</a>'; }).join('\n');
+
+    var gallery = src.gallery || [];
+    var galleryBlock = gallery.length ? [
+      '<section class="gal">',
+      '  <h2>사진</h2>',
+      '  <div class="strip">',
+      gallery.map(function(g, i){ return '    <button class="shot" type="button"><img src="' + g + '" alt="사진 ' + (i+1) + '" loading="lazy"></button>'; }).join('\n'),
+      '  </div>',
+      '  <p class="gal-hint">옆으로 넘겨 보고, 누르면 크게 볼 수 있어요</p>',
+      '</section>',
+      '<div class="lb" id="lb" hidden><button class="lb-x" type="button" aria-label="닫기">×</button><img id="lbImg" alt=""></div>'
+    ].join('\n') : '';
+
+    var js = [
+      '<script>',
+      '(function(){',
+      '  var sb = document.getElementById("shareBtn");',
+      '  sb.addEventListener("click", function(){',
+      '    var u = location.href.split("#")[0];',
+      '    if (navigator.share) { navigator.share({ title: document.title, url: u }).catch(function(){}); return; }',
+      '    if (navigator.clipboard) navigator.clipboard.writeText(u).then(function(){ sb.classList.add("ok"); setTimeout(function(){ sb.classList.remove("ok"); }, 1500); });',
+      '  });',
+      gallery.length ? '  var lb = document.getElementById("lb"), im = document.getElementById("lbImg");\n  document.querySelectorAll(".shot").forEach(function(b){ b.addEventListener("click", function(){ im.src = b.querySelector("img").src; lb.hidden = false; }); });\n  lb.addEventListener("click", function(){ lb.hidden = true; im.src = ""; });' : '',
+      '})();',
+      '<\/script>'
+    ].filter(Boolean).join('\n');
+
     var kakaoBlock = d.kakao ? [
       '<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" crossorigin="anonymous"><\/script>',
       '<script>',
-      '  (function(){',
-      '    var SITE = ' + JSON.stringify(d.site || '') + ' || location.origin;',
-      '    var btn = document.getElementById("kakaoShare");',
-      '    try { if (window.Kakao && !Kakao.isInitialized()) Kakao.init(' + JSON.stringify(d.kakao) + '); } catch (e) {}',
-      '    btn.addEventListener("click", function(){',
-      '      if (!window.Kakao || !Kakao.isInitialized()) { alert("카카오톡 공유를 불러오지 못했어요. 주소를 직접 보내 주세요."); return; }',
-      '      Kakao.Share.sendDefault({',
-      '        objectType: "feed",',
-      '        content: { title: ' + JSON.stringify(titleText) + ', description: "눌러서 연락처를 저장하세요.",',
-      (shareImg && !/^data:/.test(shareImg) ? '          imageUrl: SITE + "/' + shareImg + '",' : ''),
-      '          link: { mobileWebUrl: SITE, webUrl: SITE } },',
-      '        buttons: [',
-      '          { title: "모바일 명함 보기", link: { mobileWebUrl: SITE, webUrl: SITE } },',
-      '          { title: "연락처 저장", link: { mobileWebUrl: SITE + "/contact.vcf", webUrl: SITE + "/contact.vcf" } }',
-      '        ]',
-      '      });',
-      '    });',
-      '  })();',
+      '(function(){',
+      '  var SITE = ' + JSON.stringify(d.site || '') + ' || location.origin;',
+      '  try { if (window.Kakao && !Kakao.isInitialized()) Kakao.init(' + JSON.stringify(d.kakao) + '); } catch (e) {}',
+      '  document.getElementById("kakaoShare").addEventListener("click", function(){',
+      '    if (!window.Kakao || !Kakao.isInitialized()) { alert("카카오톡 공유를 불러오지 못했어요. 주소를 직접 보내 주세요."); return; }',
+      '    Kakao.Share.sendDefault({ objectType: "feed",',
+      '      content: { title: ' + JSON.stringify(titleText) + ', description: "눌러서 연락처를 저장하세요.",',
+      (shareImg && !/^data:/.test(shareImg) ? '        imageUrl: SITE + "/' + shareImg + '",' : ''),
+      '        link: { mobileWebUrl: SITE, webUrl: SITE } },',
+      '      buttons: [ { title: "모바일 명함 보기", link: { mobileWebUrl: SITE, webUrl: SITE } },',
+      '                 { title: "연락처 저장", link: { mobileWebUrl: SITE + "/contact.vcf", webUrl: SITE + "/contact.vcf" } } ] });',
+      '  });',
+      '})();',
       '<\/script>'
     ].filter(Boolean).join('\n') : '';
-
-    var gallery = (src.gallery || []);
-    var galleryBlock = gallery.length ? [
-      '  <section class="card gal">',
-      '    <h2>사진</h2>',
-      '    <div class="strip">',
-      gallery.map(function(g, i){ return '      <button class="shot" type="button" data-i="' + i + '"><img src="' + g + '" alt="사진 ' + (i+1) + '" loading="lazy"></button>'; }).join('\n'),
-      '    </div>',
-      '    <p class="gal-hint">옆으로 넘겨 보고, 누르면 크게 볼 수 있어요</p>',
-      '  </section>',
-      '  <div class="lb" id="lb" hidden><button class="lb-x" type="button" aria-label="닫기">×</button><img id="lbImg" alt=""></div>'
-    ].join('\n') : '';
-    var galleryJS = gallery.length ? [
-      '<script>',
-      '  (function(){',
-      '    var lb = document.getElementById("lb"), im = document.getElementById("lbImg");',
-      '    document.querySelectorAll(".shot").forEach(function(b){ b.addEventListener("click", function(){ im.src = b.querySelector("img").src; lb.hidden = false; }); });',
-      '    lb.addEventListener("click", function(){ lb.hidden = true; im.src = ""; });',
-      '  })();',
-      '<\/script>'
-    ].join('\n') : '';
-
-    var linkBlock = d.links.length ? [
-      '    <div class="links">',
-      d.links.map(function(l){ return '      <a class="btn ghost" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + ICON[l.kind] + esc(l.label) + '</a>'; }).join('\n'),
-      '    </div>'
-    ].join('\n') : '';
 
     return [
 '<!doctype html>',
@@ -258,70 +296,82 @@
 (ogImage ? '<meta property="og:image" content="' + esc(ogImage) + '">' : ''),
 '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">',
 '<style>',
-'  :root{--bg:' + d.bg + ';--paper:#FFFFFFE6;--ink:#1A1818;--sub:#6F6962;--line:#00000014;--accent:' + d.accent + '}',
+'  :root{--bg:' + d.bg + ';--accent:' + d.accent + ';--ink:#16181D;--sub:#626875}',
 '  *{box-sizing:border-box;margin:0;padding:0}',
 '  html,body{background:var(--bg)}',
 '  body{font-family:Pretendard,"Malgun Gothic",-apple-system,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}',
 '  [hidden]{display:none!important}',
-'  .wrap{max-width:440px;margin:0 auto;padding:28px 20px 40px;display:grid;gap:16px}',
-'  .card{background:var(--paper);border-radius:22px;padding:28px 24px 26px;box-shadow:0 12px 32px rgba(60,40,20,.08)}',
-'  .logo{display:block;max-width:78%;max-height:240px;margin:0 auto 6px}',
-'  .company{text-align:center;font-size:22px;font-weight:700;letter-spacing:.04em}',
-'  .company small{display:block;margin-top:6px;font-size:11px;font-weight:600;letter-spacing:.3em;color:var(--accent)}',
-'  .greet{margin:22px 4px 24px;font-size:15px;line-height:1.75;color:#3A3633;text-align:center;word-break:keep-all}',
-'  .person{border-top:1px solid var(--line);padding-top:22px;text-align:center}',
-'  .avatar{display:block;width:104px;height:104px;border-radius:50%;object-fit:cover;margin:0 auto 14px;border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.12)}',
-'  .name{font-size:26px;font-weight:700;letter-spacing:.08em}',
-'  .title{margin-top:6px;font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.12em}',
-'  .phone{display:inline-block;margin-top:16px;font-size:19px;font-weight:600;color:var(--ink);text-decoration:none;letter-spacing:.03em}',
-'  .mail{display:block;margin-top:8px;font-size:15px;color:var(--ink);text-decoration:none;word-break:break-all}',
-'  .actions,.links{margin-top:22px;display:grid;gap:10px}',
-'  .links{margin-top:10px}',
-'  .btn{display:flex;align-items:center;justify-content:center;gap:8px;height:54px;border-radius:14px;font-size:16px;font-weight:700;text-decoration:none;border:0;font-family:inherit;cursor:pointer;width:100%}',
-'  .btn svg{width:20px;height:20px;flex:none}',
-'  .primary{background:var(--accent);color:#fff}',
-'  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
-'  .ghost{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}',
-'  .kakao{background:#FEE500;color:#191919}',
-'  .gal{padding:22px 0 18px}',
-'  .gal h2{font-size:16px;margin:0 24px 12px}',
-'  .strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 24px 6px;-webkit-overflow-scrolling:touch}',
+'  svg{width:20px;height:20px;flex:none}',
+'  .wrap{max-width:440px;margin:0 auto;padding:14px 14px 36px;display:grid;gap:14px}',
+'  .top{display:flex;justify-content:center;gap:12px}',
+'  .ti{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;color:var(--accent);border:0;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer;text-decoration:none}',
+'  .ti.kakao{background:#FEE500}',
+'  .ti.ok{background:var(--accent);color:#fff}',
+'  .card{background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 14px 34px rgba(20,30,60,.12)}',
+'  .head{padding:30px 24px 78px;text-align:center}',
+'  .logo{display:block;max-width:72%;max-height:120px;margin:0 auto}',
+'  .company{font-size:24px;font-weight:800;letter-spacing:.02em;color:var(--accent)}',
+'  .sub{margin-top:6px;font-size:14px;font-weight:600;color:var(--accent)}',
+'  .body{background:var(--accent);color:#fff;padding:0 24px 28px;text-align:center;position:relative;display:flow-root}',
+'  .avatar{width:132px;height:132px;border-radius:50%;object-fit:cover;border:5px solid #fff;margin:-66px auto 0;display:block;background:#eee;box-shadow:0 6px 18px rgba(0,0,0,.18)}',
+'  .noavatar{height:0}',
+'  .name{margin-top:14px;font-size:27px;font-weight:800;letter-spacing:.06em}',
+'  .noavatar + .name{padding-top:26px}',
+'  .title{margin-top:4px;font-size:14px;opacity:.85}',
+'  .pill{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:9px 20px;border:2px solid #fff;border-radius:999px;color:#fff;font-size:18px;font-weight:700;text-decoration:none;letter-spacing:.03em}',
+'  .greet{margin-top:16px;font-size:14px;line-height:1.7;opacity:.9;word-break:keep-all}',
+'  .infos{margin-top:22px;display:grid;gap:12px;text-align:left}',
+'  .info{display:flex;align-items:flex-start;gap:12px;color:#fff;text-decoration:none;font-size:15px;line-height:1.4}',
+'  .info span{word-break:break-all;padding-top:1px}',
+'  .sns{margin-top:24px;display:flex;justify-content:center;gap:18px;flex-wrap:wrap}',
+'  .sn{display:grid;justify-items:center;gap:6px;color:#fff;text-decoration:none;font-size:12px}',
+'  .sn i{width:50px;height:50px;border-radius:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.18)}',
+'  .sn i svg{width:28px;height:28px}',
+'  .sn b{font-weight:600;opacity:.9}',
+'  .acts{margin-top:24px;display:grid;gap:10px}',
+'  .btn{display:flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:14px;font-size:16px;font-weight:700;text-decoration:none;border:0;font-family:inherit;cursor:pointer}',
+'  .btn.white{background:#fff;color:var(--accent)}',
+'  .btn.line{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.7)}',
+'  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
+'  .gal{background:#fff;border-radius:22px;padding:20px 0 16px;box-shadow:0 14px 34px rgba(20,30,60,.08)}',
+'  .gal h2{font-size:16px;margin:0 22px 12px}',
+'  .strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 22px 6px}',
 '  .shot{flex:0 0 78%;aspect-ratio:4/3;border:0;padding:0;border-radius:14px;overflow:hidden;scroll-snap-align:center;background:#eee;cursor:zoom-in}',
 '  .shot img{width:100%;height:100%;object-fit:cover;display:block}',
-'  .gal-hint{margin:8px 24px 0;font-size:12px;color:var(--sub)}',
+'  .gal-hint{margin:8px 22px 0;font-size:12px;color:var(--sub)}',
 '  .lb{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:9;padding:16px}',
 '  .lb img{max-width:100%;max-height:100%;border-radius:8px}',
 '  .lb-x{position:absolute;top:12px;right:16px;background:none;border:0;color:#fff;font-size:36px;line-height:1;cursor:pointer}',
-'  .foot{text-align:center;margin-top:10px;font-size:12px;color:var(--sub);letter-spacing:.2em}',
+'  .foot{text-align:center;font-size:12px;color:var(--sub);letter-spacing:.12em}',
 '</style>',
 '</head>',
 '<body>',
 '<main class="wrap">',
+'  <nav class="top">' + topIcons + '</nav>',
 '  <section class="card">',
-(src.logo ? '    <img class="logo" src="' + src.logo + '" alt="' + esc(d.company) + ' 로고">'
-          : '    <p class="company">' + esc(d.company) + (d.companyEn ? '<small>' + esc(d.companyEn) + '</small>' : '') + '</p>'),
-(d.greeting ? '    <p class="greet">\n      ' + greeting + '\n    </p>' : ''),
-'    <div class="person">',
-(src.photo ? '      <img class="avatar" src="' + src.photo + '" alt="' + esc(d.name) + ' 사진">' : ''),
-'      <div class="name">' + esc(d.name) + '</div>',
-(d.title ? '      <div class="title">' + esc(d.title) + '</div>' : ''),
-'      <a class="phone" href="tel:' + tel + '">' + esc(d.phone) + '</a>',
-(d.email ? '      <a class="mail" href="mailto:' + esc(d.email) + '">' + esc(d.email) + '</a>' : ''),
+'    <div class="head">',
+(src.logo ? '      <img class="logo" src="' + src.logo + '" alt="' + esc(d.company) + ' 로고">' : '      <p class="company">' + esc(d.company) + '</p>'),
+(d.companyEn ? '      <p class="sub">' + esc(d.companyEn) + '</p>' : ''),
 '    </div>',
-'    <div class="actions">',
-'      <a class="btn primary" href="contact.vcf" download="' + esc(d.name) + '.vcf">연락처 저장하기</a>',
-'      <div class="row">',
-'        <a class="btn ghost" href="tel:' + tel + '">전화하기</a>',
-'        <a class="btn ghost" href="sms:' + tel + '">문자하기</a>',
+'    <div class="body">',
+(src.photo ? '      <img class="avatar" src="' + src.photo + '" alt="' + esc(d.name) + ' 사진">' : '      <div class="noavatar"></div>'),
+'      <p class="name">' + esc(d.name) + '</p>',
+(d.title ? '      <p class="title">' + esc(d.title) + '</p>' : ''),
+'      <a class="pill" href="tel:' + tel + '">' + I.phone + esc(d.phone) + '</a>',
+(d.greeting ? '      <p class="greet">' + esc(d.greeting).replace(/\n/g,'<br>') + '</p>' : ''),
+(rows.length ? '      <div class="infos">\n        ' + rows.join('\n        ') + '\n      </div>' : ''),
+(snsRow ? '      ' + snsRow : ''),
+'      <div class="acts">',
+'        <a class="btn white" href="contact.vcf" download="' + esc(d.name) + '.vcf">' + I.save + '연락처 저장하기</a>',
+'        <div class="two"><a class="btn line" href="tel:' + tel + '">전화하기</a><a class="btn line" href="sms:' + tel + '">문자하기</a></div>',
+(linkBtns ? '        ' + linkBtns : ''),
 '      </div>',
 '    </div>',
-linkBlock,
-(d.kakao ? '    <div class="actions" style="margin-top:10px"><button class="btn kakao" id="kakaoShare" type="button">카카오톡으로 명함 보내기</button></div>' : ''),
 '  </section>',
 galleryBlock,
-'  <p class="foot">' + esc(d.companyEn || d.company) + '</p>',
+'  <p class="foot">' + esc(d.company) + '</p>',
 '</main>',
-galleryJS,
+js,
 kakaoBlock,
 '</body>',
 '</html>'
@@ -331,12 +381,15 @@ kakaoBlock,
   function buildVCF(d){
     var lines = ['BEGIN:VCARD','VERSION:3.0',
       'N:' + vEsc(d.name) + ';;;;', 'FN:' + vEsc(d.name),
-      'ORG:' + vEsc(d.company + (d.companyEn ? ' (' + d.companyEn + ')' : ''))];
+      'ORG:' + vEsc(d.company + (d.companyEn ? ' ' + d.companyEn : ''))];
     if (d.title) lines.push('TITLE:' + vEsc(d.title));
     lines.push('TEL;TYPE=CELL,VOICE:' + d.phone);
+    if (d.office) lines.push('TEL;TYPE=WORK,VOICE:' + d.office);
+    if (d.fax) lines.push('TEL;TYPE=WORK,FAX:' + d.fax);
     if (d.email) lines.push('EMAIL;TYPE=INTERNET:' + d.email);
+    if (d.address) lines.push('ADR;TYPE=WORK:;;' + vEsc(d.address) + ';;;;');
     if (d.site) lines.push('URL:' + d.site);
-    d.links.forEach(function(l){ if (l.kind === 'ig' || l.kind === 'web') lines.push('URL:' + l.url); });
+    d.sns.forEach(function(s){ lines.push('URL:' + s.url); });
     lines.push('END:VCARD');
     return lines.join('\r\n') + '\r\n';
   }
@@ -344,10 +397,8 @@ kakaoBlock,
   var HEADERS = '/contact.vcf\n  Content-Type: text/vcard; charset=utf-8\n  Content-Disposition: attachment; filename="contact.vcf"\n';
 
   function previewSrc(){
-    return {
-      logo: img.logo && img.logo.dataURL, share: null, photo: img.photo && img.photo.dataURL,
-      gallery: img.gallery.map(function(g){ return g.dataURL; })
-    };
+    return { logo: img.logo && img.logo.dataURL, share: null, photo: img.photo && img.photo.dataURL,
+             gallery: img.gallery.map(function(g){ return g.dataURL; }) };
   }
   function refresh(){ $('pv').srcdoc = buildHTML(data(), previewSrc()); }
 
