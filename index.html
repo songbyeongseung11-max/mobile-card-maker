@@ -38,7 +38,18 @@
   .preview iframe{width:100%;height:780px;border:0;border-radius:24px;background:#fff;box-shadow:0 12px 32px rgba(20,30,60,.14)}
   .steps{background:var(--paper);border-radius:18px;padding:20px 24px;line-height:1.8;font-size:14px;margin-top:16px}
   .steps ol{margin:6px 0 0;padding-left:20px}
-  @media (max-width:860px){.wrap{grid-template-columns:1fr}.preview{position:static}.row,.row3{grid-template-columns:1fr}}
+  .consent{background:#F5F7FB;border-radius:12px;padding:14px}
+  .chk{display:flex;gap:10px;align-items:flex-start;color:var(--ink);font-size:14px;line-height:1.5}
+  .chk input{width:auto;margin-top:3px}
+  .chk a{color:var(--accent)}
+  .btn.sub{background:#fff;color:var(--sub);border:1.5px solid var(--line);height:46px;font-size:14px}
+  .result{background:#EEF6EE;border:1.5px solid #9BCB9B;border-radius:14px;padding:16px;display:grid;gap:8px}
+  .result p{margin:0;font-size:14px;color:var(--sub)}
+  .linkrow{display:flex;gap:8px}
+  .linkrow input{flex:1;font-size:14px}
+  .linkrow button{font:inherit;font-weight:700;border:0;border-radius:10px;background:var(--accent);color:#fff;padding:0 16px;cursor:pointer}
+  .result a{color:var(--accent);font-weight:700;text-decoration:none}
+  .err{color:#C62828;font-size:14px;margin:0}  @media (max-width:860px){.wrap{grid-template-columns:1fr}.preview{position:static}.row,.row3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -132,7 +143,22 @@
       <p class="hint">넣으면 맨 위 카카오톡 아이콘으로 명함을 카드처럼 보낼 수 있어요. 카카오 디벨로퍼스에 위 주소를 등록해야 동작해요. (README 참고)</p>
     </fieldset>
 
-    <button class="btn" id="go" type="submit">명함 파일 받기 (zip)</button>
+    <fieldset class="consent">
+      <legend>동의</legend>
+      <label class="chk"><input type="checkbox" id="agreeP"> <span><b>[필수]</b> 개인정보 수집·이용 및 명함 공개에 동의합니다. <a href="privacy.html" target="_blank" rel="noopener">내용 보기</a></span></label>
+      <label class="chk"><input type="checkbox" id="agreeM"> <span>[선택] 새 기능·행사 소식 안내(이메일·문자) 수신에 동의합니다.</span></label>
+      <p class="hint">만든 명함은 링크를 아는 누구나 볼 수 있는 공개 페이지예요. 공개해도 되는 정보만 넣어 주세요.</p>
+    </fieldset>
+
+    <button class="btn" id="publish" type="button">내 명함 바로 만들기 (무료)</button>
+    <div class="result" id="result" hidden>
+      <b>명함이 만들어졌어요!</b>
+      <p>이 링크를 카톡으로 보내면 돼요.</p>
+      <div class="linkrow"><input id="cardUrl" readonly><button type="button" id="copyBtn">복사</button></div>
+      <a id="openCard" href="#" target="_blank" rel="noopener">내 명함 열어 보기 →</a>
+    </div>
+    <p class="err" id="err" hidden></p>
+    <button class="btn sub" id="go" type="submit">또는 파일로 받기 (zip · 직접 올리기)</button>
   </form>
 
   <aside class="preview">
@@ -249,7 +275,7 @@
 
     var topIcons = [
       d.kakao ? '<button class="ti" id="kakaoShare" type="button" aria-label="카카오톡으로 보내기">' + I.chat + '</button>' : '',
-      '<a class="ti" href="contact.vcf" download="' + esc(d.name) + '.vcf" aria-label="연락처 저장">' + I.save + '</a>',
+      '<a class="ti" href="' + (src.vcf || 'contact.vcf') + '" download="' + esc(d.name) + '.vcf" aria-label="연락처 저장">' + I.save + '</a>',
       '<button class="ti" id="shareBtn" type="button" aria-label="링크 공유">' + I.share + '</button>'
     ].filter(Boolean).join('');
 
@@ -401,7 +427,7 @@
 (rows.length ? '    <div class="list">\n      ' + rows.join('\n      ') + '\n    </div>' : ''),
 (sns ? '    ' + sns : ''),
 '    <div class="acts">',
-'      <a class="btn solid" href="contact.vcf" download="' + esc(d.name) + '.vcf">연락처 저장</a>',
+'      <a class="btn solid" href="' + (src.vcf || 'contact.vcf') + '" download="' + esc(d.name) + '.vcf">연락처 저장</a>',
 '      <div class="two"><a class="btn line" href="tel:' + tel + '">전화하기</a><a class="btn line" href="sms:' + tel + '">문자하기</a></div>',
 (linkBtns.length ? '      ' + linkBtns.join('\n      ') : ''),
 '    </div>',
@@ -451,6 +477,56 @@ kakaoBlock,
   document.querySelectorAll('#f input:not([type=file]), #f textarea').forEach(function(el){ el.addEventListener('input', refresh); el.addEventListener('change', refresh); });
   refresh();
 
+  // ── 바로 만들기: Supabase에 사진·명함 데이터 올리고 기록 남기기
+  var SB = 'https://wqpzefltupgkjuypesbb.supabase.co';
+  var SBKEY = 'sb_publishable_LrIWfQ8YUP75SrQxc3uEBw_0OfA-nIS';
+  var VIEW = location.href.split(/[?#]/)[0].replace(/[^\/]*$/, '') + 'c/?s=';
+  function sbHeaders(extra){ var h = { apikey: SBKEY, Authorization: 'Bearer ' + SBKEY }; for (var k in extra) h[k] = extra[k]; return h; }
+  function upload(path, blob, type){
+    return fetch(SB + '/storage/v1/object/cards/' + path, { method: 'POST', headers: sbHeaders({ 'Content-Type': type, 'x-upsert': 'false' }), body: blob })
+      .then(function(r){ if (!r.ok) return r.text().then(function(t){ throw new Error('upload ' + r.status + ' ' + t); }); });
+  }
+  function newSlug(){ var a = 'abcdefghjkmnpqrstuvwxyz23456789', s = ''; for (var i = 0; i < 7; i++) s += a[Math.floor(Math.random() * a.length)]; return s; }
+  function showErr(m){ $('err').textContent = m; $('err').hidden = false; }
+
+  $('publish').addEventListener('click', function(){
+    $('err').hidden = true;
+    var d = data();
+    if (!d.name || !d.phone || !d.company) { showErr('이름, 회사 이름, 휴대폰 번호는 꼭 넣어 주세요.'); return; }
+    if (!$('agreeP').checked) { showErr('[필수] 개인정보 수집·이용 및 명함 공개에 동의해 주세요.'); return; }
+    var btn = this; btn.disabled = true; btn.textContent = '만드는 중… 잠시만요';
+    var slug = newSlug();
+    var files = { gallery: [] }, jobs = [];
+    var mime = function(ext){ return ext === 'png' ? 'image/png' : 'image/jpeg'; };
+    // 1) 기록 먼저 (주소 중복 방지)
+    fetch(SB + '/rest/v1/signups', { method: 'POST', headers: sbHeaders({ 'Content-Type': 'application/json', Prefer: 'return=minimal' }),
+      body: JSON.stringify({ slug: slug, name: d.name, title: d.title, company: d.company, phone: d.phone, email: d.email,
+        agree_privacy: true, agree_marketing: $('agreeM').checked, user_agent: navigator.userAgent.slice(0, 200) }) })
+    .then(function(r){ if (!r.ok) return r.text().then(function(t){ throw new Error('record ' + r.status + ' ' + t); }); })
+    .then(function(){
+      // 2) 사진들
+      if (img.logo)  { files.logo  = 'logo.'  + img.logo.ext;  jobs.push(upload(slug + '/' + files.logo,  img.logo.blob,  mime(img.logo.ext))); }
+      if (img.share) { files.share = 'share.' + img.share.ext; jobs.push(upload(slug + '/' + files.share, img.share.blob, mime(img.share.ext))); }
+      if (img.photo) { files.photo = 'photo.' + img.photo.ext; jobs.push(upload(slug + '/' + files.photo, img.photo.blob, mime(img.photo.ext))); }
+      img.gallery.forEach(function(g, i){ var n = 'g' + String(i+1).padStart(2,'0') + '.' + g.ext; files.gallery.push(n); jobs.push(upload(slug + '/' + n, g.blob, mime(g.ext))); });
+      // 3) 연락처 파일 + 명함 데이터
+      d.site = VIEW + slug;
+      jobs.push(upload(slug + '/contact.vcf', new Blob([buildVCF(d)], { type: 'text/vcard' }), 'text/vcard'));
+      jobs.push(upload(slug + '/card.json', new Blob([JSON.stringify({ v: 1, d: d, files: files })], { type: 'application/json' }), 'application/json'));
+      return Promise.all(jobs);
+    })
+    .then(function(){
+      var link = VIEW + slug;
+      $('cardUrl').value = link; $('openCard').href = link; $('result').hidden = false;
+      btn.textContent = '완료! 새 명함을 또 만들려면 새로고침';
+      $('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    })
+    .catch(function(e){ console.error(e); showErr('명함을 만들지 못했어요. 잠시 후 다시 시도해 주세요. (' + e.message.slice(0, 80) + ')'); btn.disabled = false; btn.textContent = '내 명함 바로 만들기 (무료)'; });
+  });
+  $('copyBtn').addEventListener('click', function(){
+    var v = $('cardUrl').value, b = this;
+    (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject()).then(function(){ b.textContent = '복사됨'; }, function(){ $('cardUrl').select(); document.execCommand('copy'); b.textContent = '복사됨'; });
+  });
   $('f').addEventListener('submit', function(e){
     e.preventDefault();
     var d = data();
