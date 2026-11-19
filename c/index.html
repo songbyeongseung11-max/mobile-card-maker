@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>모바일 명함</title>
+<meta name="description" content="눌러서 명함을 보고 연락처를 저장하세요.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="모바일 명함">
+<meta property="og:description" content="눌러서 명함을 보고 연락처를 저장하세요.">
+<style>
+  html,body{margin:0;background:#fff;color:#777;font-family:'Malgun Gothic',-apple-system,sans-serif}
+  .box{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font-size:15px;line-height:1.6}
+</style>
+<script src="../card.js"></script>
+</head>
+<body>
+<div class="box"><p id="msg">명함을 불러오는 중…</p></div>
+<script>
+(function(){
+  var SB = 'https://wqpzefltupgkjuypesbb.supabase.co/storage/v1/object/public/cards/';
+  var q = new URLSearchParams(location.search);
+  var s = (q.get('s') || location.hash.slice(1) || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  function msg(t){ document.getElementById('msg').textContent = t; }
+  if (!s || !window.CardKit) { msg('명함 주소가 올바르지 않아요.'); return; }
+  fetch(SB + s + '/card.json', { cache: 'no-cache' })
+    .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(j){
+      var base = SB + s + '/', f = j.files || {};
+      var src = {
+        logo: f.logo && base + f.logo, share: f.share && base + f.share, photo: f.photo && base + f.photo,
+        gallery: (f.gallery || []).map(function(n){ return base + n; }), vcf: base + 'contact.vcf'
+      };
+      var html = window.CardKit.buildHTML(j.d, src);
+      document.open(); document.write(html); document.close();
+    })
+    .catch(function(){ msg('명함을 찾을 수 없어요. 주소를 다시 확인해 주세요.'); });
+})();
+</script>
+</body>
+</html>
