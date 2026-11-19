@@ -6,17 +6,25 @@ N:김하나;;;;
 
 FN:김하나
 
-ORG:하나 플라워 스튜디오 (HANA FLOWER STUDIO)
+ORG:하나 플라워 스튜디오 웨딩 · 행사 · 원데이 클래스
 
-TITLE:플로리스트
+TITLE:대표 플로리스트
 
 TEL;TYPE=CELL,VOICE:010-0000-0000
 
+TEL;TYPE=WORK,VOICE:02-000-0000
+
 EMAIL;TYPE=INTERNET:hello@example.com
+
+ADR;TYPE=WORK:;;서울시 중구 세종대로 110;;;;
 
 URL:https://songbyeongseung11-max.github.io/mobile-card-maker/example
 
 URL:https://www.instagram.com/
+
+URL:https://blog.naver.com/
+
+URL:https://www.youtube.com/
 
 URL:https://example.com/
 

@@ -3,100 +3,117 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>하나 플라워 스튜디오 · 김하나 플로리스트</title>
+<title>하나 플라워 스튜디오 · 김하나 대표 플로리스트</title>
 <meta name="description" content="하나 플라워 스튜디오 김하나의 모바일 명함입니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://songbyeongseung11-max.github.io/mobile-card-maker/example/">
-<meta property="og:title" content="하나 플라워 스튜디오 · 김하나 플로리스트">
+<meta property="og:title" content="하나 플라워 스튜디오 · 김하나 대표 플로리스트">
 <meta property="og:description" content="눌러서 연락처를 저장하세요.">
 <meta property="og:image" content="https://songbyeongseung11-max.github.io/mobile-card-maker/example/img/share.jpg">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
-  :root{--bg:#F6ECE6;--paper:#FFFFFFE6;--ink:#1A1818;--sub:#6F6962;--line:#00000014;--accent:#D65C6E}
+  :root{--bg:#F6ECE6;--accent:#B9475A;--ink:#16181D;--sub:#626875}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg)}
   body{font-family:Pretendard,"Malgun Gothic",-apple-system,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
   [hidden]{display:none!important}
-  .wrap{max-width:440px;margin:0 auto;padding:28px 20px 40px;display:grid;gap:16px}
-  .card{background:var(--paper);border-radius:22px;padding:28px 24px 26px;box-shadow:0 12px 32px rgba(60,40,20,.08)}
-  .logo{display:block;max-width:78%;max-height:240px;margin:0 auto 6px}
-  .company{text-align:center;font-size:22px;font-weight:700;letter-spacing:.04em}
-  .company small{display:block;margin-top:6px;font-size:11px;font-weight:600;letter-spacing:.3em;color:var(--accent)}
-  .greet{margin:22px 4px 24px;font-size:15px;line-height:1.75;color:#3A3633;text-align:center;word-break:keep-all}
-  .person{border-top:1px solid var(--line);padding-top:22px;text-align:center}
-  .avatar{display:block;width:104px;height:104px;border-radius:50%;object-fit:cover;margin:0 auto 14px;border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.12)}
-  .name{font-size:26px;font-weight:700;letter-spacing:.08em}
-  .title{margin-top:6px;font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.12em}
-  .phone{display:inline-block;margin-top:16px;font-size:19px;font-weight:600;color:var(--ink);text-decoration:none;letter-spacing:.03em}
-  .mail{display:block;margin-top:8px;font-size:15px;color:var(--ink);text-decoration:none;word-break:break-all}
-  .actions,.links{margin-top:22px;display:grid;gap:10px}
-  .links{margin-top:10px}
-  .btn{display:flex;align-items:center;justify-content:center;gap:8px;height:54px;border-radius:14px;font-size:16px;font-weight:700;text-decoration:none;border:0;font-family:inherit;cursor:pointer;width:100%}
-  .btn svg{width:20px;height:20px;flex:none}
-  .primary{background:var(--accent);color:#fff}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .ghost{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
-  .kakao{background:#FEE500;color:#191919}
-  .gal{padding:22px 0 18px}
-  .gal h2{font-size:16px;margin:0 24px 12px}
-  .strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 24px 6px;-webkit-overflow-scrolling:touch}
+  svg{width:20px;height:20px;flex:none}
+  .wrap{max-width:440px;margin:0 auto;padding:14px 14px 36px;display:grid;gap:14px}
+  .top{display:flex;justify-content:center;gap:12px}
+  .ti{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;color:var(--accent);border:0;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer;text-decoration:none}
+  .ti.kakao{background:#FEE500}
+  .ti.ok{background:var(--accent);color:#fff}
+  .card{background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 14px 34px rgba(20,30,60,.12)}
+  .head{padding:30px 24px 78px;text-align:center}
+  .logo{display:block;max-width:72%;max-height:120px;margin:0 auto}
+  .company{font-size:24px;font-weight:800;letter-spacing:.02em;color:var(--accent)}
+  .sub{margin-top:6px;font-size:14px;font-weight:600;color:var(--accent)}
+  .body{background:var(--accent);color:#fff;padding:0 24px 28px;text-align:center;position:relative;display:flow-root}
+  .avatar{width:132px;height:132px;border-radius:50%;object-fit:cover;border:5px solid #fff;margin:-66px auto 0;display:block;background:#eee;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+  .noavatar{height:0}
+  .name{margin-top:14px;font-size:27px;font-weight:800;letter-spacing:.06em}
+  .noavatar + .name{padding-top:26px}
+  .title{margin-top:4px;font-size:14px;opacity:.85}
+  .pill{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:9px 20px;border:2px solid #fff;border-radius:999px;color:#fff;font-size:18px;font-weight:700;text-decoration:none;letter-spacing:.03em}
+  .greet{margin-top:16px;font-size:14px;line-height:1.7;opacity:.9;word-break:keep-all}
+  .infos{margin-top:22px;display:grid;gap:12px;text-align:left}
+  .info{display:flex;align-items:flex-start;gap:12px;color:#fff;text-decoration:none;font-size:15px;line-height:1.4}
+  .info span{word-break:break-all;padding-top:1px}
+  .sns{margin-top:24px;display:flex;justify-content:center;gap:18px;flex-wrap:wrap}
+  .sn{display:grid;justify-items:center;gap:6px;color:#fff;text-decoration:none;font-size:12px}
+  .sn i{width:50px;height:50px;border-radius:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.18)}
+  .sn i svg{width:28px;height:28px}
+  .sn b{font-weight:600;opacity:.9}
+  .acts{margin-top:24px;display:grid;gap:10px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:14px;font-size:16px;font-weight:700;text-decoration:none;border:0;font-family:inherit;cursor:pointer}
+  .btn.white{background:#fff;color:var(--accent)}
+  .btn.line{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.7)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .gal{background:#fff;border-radius:22px;padding:20px 0 16px;box-shadow:0 14px 34px rgba(20,30,60,.08)}
+  .gal h2{font-size:16px;margin:0 22px 12px}
+  .strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 22px 6px}
   .shot{flex:0 0 78%;aspect-ratio:4/3;border:0;padding:0;border-radius:14px;overflow:hidden;scroll-snap-align:center;background:#eee;cursor:zoom-in}
   .shot img{width:100%;height:100%;object-fit:cover;display:block}
-  .gal-hint{margin:8px 24px 0;font-size:12px;color:var(--sub)}
+  .gal-hint{margin:8px 22px 0;font-size:12px;color:var(--sub)}
   .lb{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:9;padding:16px}
   .lb img{max-width:100%;max-height:100%;border-radius:8px}
   .lb-x{position:absolute;top:12px;right:16px;background:none;border:0;color:#fff;font-size:36px;line-height:1;cursor:pointer}
-  .foot{text-align:center;margin-top:10px;font-size:12px;color:var(--sub);letter-spacing:.2em}
+  .foot{text-align:center;font-size:12px;color:var(--sub);letter-spacing:.12em}
 </style>
 </head>
 <body>
 <main class="wrap">
+  <nav class="top"><a class="ti" href="contact.vcf" download="김하나.vcf" aria-label="연락처 저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></a><button class="ti" id="shareBtn" type="button" aria-label="링크 공유"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4M12 2v14"/></svg></button></nav>
   <section class="card">
-    <p class="company">하나 플라워 스튜디오<small>HANA FLOWER STUDIO</small></p>
-    <p class="greet">
-      안녕하세요, 하나 플라워입니다.<br>
-      꽃으로 특별한 날을 더 아름답게<br>
-      만들어 드릴게요.
-    </p>
-    <div class="person">
-      <img class="avatar" src="img/photo.jpg" alt="김하나 사진">
-      <div class="name">김하나</div>
-      <div class="title">플로리스트</div>
-      <a class="phone" href="tel:01000000000">010-0000-0000</a>
-      <a class="mail" href="mailto:hello@example.com">hello@example.com</a>
+    <div class="head">
+      <p class="company">하나 플라워 스튜디오</p>
+      <p class="sub">웨딩 · 행사 · 원데이 클래스</p>
     </div>
-    <div class="actions">
-      <a class="btn primary" href="contact.vcf" download="김하나.vcf">연락처 저장하기</a>
-      <div class="row">
-        <a class="btn ghost" href="tel:01000000000">전화하기</a>
-        <a class="btn ghost" href="sms:01000000000">문자하기</a>
+    <div class="body">
+      <img class="avatar" src="img/photo.jpg" alt="김하나 사진">
+      <p class="name">김하나</p>
+      <p class="title">대표 플로리스트</p>
+      <a class="pill" href="tel:01000000000"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>010-0000-0000</a>
+      <p class="greet">꽃으로 특별한 날을 더 아름답게 만들어 드릴게요.</p>
+      <div class="infos">
+        <a class="info" href="tel:020000000"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h2"/></svg><span>02-000-0000</span></a>
+        <a class="info" href="mailto:hello@example.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span>hello@example.com</span></a>
+        <a class="info" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%8B%9C%20%EC%A4%91%EA%B5%AC%20%EC%84%B8%EC%A2%85%EB%8C%80%EB%A1%9C%20110" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>서울시 중구 세종대로 110</span></a>
+        <a class="info" href="https://example.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span>example.com</span></a>
+      </div>
+      <div class="sns"><a class="sn" href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="인스타그램"><i style="background:linear-gradient(45deg,#F9CE34,#EE2A7B 55%,#6228D7)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.6"/><circle cx="16.8" cy="7.2" r="1" fill="#fff" stroke="none"/></svg></i><b>인스타그램</b></a><a class="sn" href="https://blog.naver.com/" target="_blank" rel="noopener" aria-label="블로그"><i style="background:#03C75A"><svg viewBox="0 0 24 24"><text x="12" y="16.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10.5" font-weight="900" fill="#fff">blog</text></svg></i><b>블로그</b></a><a class="sn" href="https://www.youtube.com/" target="_blank" rel="noopener" aria-label="유튜브"><i style="background:#FF0033"><svg viewBox="0 0 24 24"><path fill="#fff" d="M10 8.5v7l6-3.5z"/></svg></i><b>유튜브</b></a><a class="sn" href="https://example.com/" target="_blank" rel="noopener" aria-label="홈페이지"><i style="background:#fff;color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></i><b>홈페이지</b></a></div>
+      <div class="acts">
+        <a class="btn white" href="contact.vcf" download="김하나.vcf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>연락처 저장하기</a>
+        <div class="two"><a class="btn line" href="tel:01000000000">전화하기</a><a class="btn line" href="sms:01000000000">문자하기</a></div>
+        <a class="btn line" href="https://example.com/class" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>클래스 · 행사 안내문</a>
       </div>
     </div>
-    <div class="links">
-      <a class="btn ghost" href="https://www.instagram.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>인스타그램</a>
-      <a class="btn ghost" href="https://example.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>홈페이지</a>
-      <a class="btn ghost" href="https://example.com/class" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>클래스 · 행사 안내문</a>
-    </div>
   </section>
-  <section class="card gal">
-    <h2>사진</h2>
-    <div class="strip">
-      <button class="shot" type="button" data-i="0"><img src="img/gallery/01.jpg" alt="사진 1" loading="lazy"></button>
-      <button class="shot" type="button" data-i="1"><img src="img/gallery/02.jpg" alt="사진 2" loading="lazy"></button>
-      <button class="shot" type="button" data-i="2"><img src="img/gallery/03.jpg" alt="사진 3" loading="lazy"></button>
-      <button class="shot" type="button" data-i="3"><img src="img/gallery/04.jpg" alt="사진 4" loading="lazy"></button>
-    </div>
-    <p class="gal-hint">옆으로 넘겨 보고, 누르면 크게 볼 수 있어요</p>
-  </section>
-  <div class="lb" id="lb" hidden><button class="lb-x" type="button" aria-label="닫기">×</button><img id="lbImg" alt=""></div>
-  <p class="foot">HANA FLOWER STUDIO</p>
+<section class="gal">
+  <h2>사진</h2>
+  <div class="strip">
+    <button class="shot" type="button"><img src="img/gallery/01.jpg" alt="사진 1" loading="lazy"></button>
+    <button class="shot" type="button"><img src="img/gallery/02.jpg" alt="사진 2" loading="lazy"></button>
+    <button class="shot" type="button"><img src="img/gallery/03.jpg" alt="사진 3" loading="lazy"></button>
+    <button class="shot" type="button"><img src="img/gallery/04.jpg" alt="사진 4" loading="lazy"></button>
+  </div>
+  <p class="gal-hint">옆으로 넘겨 보고, 누르면 크게 볼 수 있어요</p>
+</section>
+<div class="lb" id="lb" hidden><button class="lb-x" type="button" aria-label="닫기">×</button><img id="lbImg" alt=""></div>
+  <p class="foot">하나 플라워 스튜디오</p>
 </main>
 <script>
-  (function(){
-    var lb = document.getElementById("lb"), im = document.getElementById("lbImg");
-    document.querySelectorAll(".shot").forEach(function(b){ b.addEventListener("click", function(){ im.src = b.querySelector("img").src; lb.hidden = false; }); });
-    lb.addEventListener("click", function(){ lb.hidden = true; im.src = ""; });
-  })();
+(function(){
+  var sb = document.getElementById("shareBtn");
+  sb.addEventListener("click", function(){
+    var u = location.href.split("#")[0];
+    if (navigator.share) { navigator.share({ title: document.title, url: u }).catch(function(){}); return; }
+    if (navigator.clipboard) navigator.clipboard.writeText(u).then(function(){ sb.classList.add("ok"); setTimeout(function(){ sb.classList.remove("ok"); }, 1500); });
+  });
+  var lb = document.getElementById("lb"), im = document.getElementById("lbImg");
+  document.querySelectorAll(".shot").forEach(function(b){ b.addEventListener("click", function(){ im.src = b.querySelector("img").src; lb.hidden = false; }); });
+  lb.addEventListener("click", function(){ lb.hidden = true; im.src = ""; });
+})();
 </script>
 </body>
 </html>
