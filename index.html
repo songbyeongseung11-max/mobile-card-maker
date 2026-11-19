@@ -73,7 +73,7 @@
         <label>팩스 (선택)<input id="fax" inputmode="tel" value=""></label>
         <label>이메일 (선택)<input id="email" type="email" value="hello@example.com"></label>
       </div>
-      <label>주소 (선택, 누르면 지도가 열려요)<input id="address" value="서울시 중구 세종대로 110"></label>
+      <div class="row3"><label>주소 (선택)<input id="address" value="서울시 중구 세종대로 110"></label><label>지도 링크 (선택, 네이버 지도 매장 페이지)<input id="mapurl" placeholder="https://map.naver.com/..."></label></div>
     </fieldset>
 
     <fieldset>
@@ -93,6 +93,10 @@
       <div class="row">
         <label>유튜브 주소<input id="youtube" placeholder="youtube.com/@채널"></label>
         <label>홈페이지 주소<input id="homepage" placeholder="https://..."></label>
+      </div>
+      <div class="row">
+        <label>페이스북 주소<input id="facebook" placeholder="facebook.com/페이지"></label>
+        <label>카카오톡 채널 주소 (상담)<input id="kakaoch" placeholder="pf.kakao.com/_xxxx"></label>
       </div>
       <div class="row3">
         <label>추가 링크 이름<input id="l1label" placeholder="행사 안내문"></label>
@@ -160,7 +164,10 @@
   }
   function data(){
     var sns = [];
+    var mp = url($('mapurl').value); if (mp) sns.push({ kind: 'map', label: '길찾기', url: mp });
+    var kc = url($('kakaoch').value);    if (kc) sns.push({ kind: 'kch', label: '카톡 상담', url: kc });
     var ig = insta($('instagram').value); if (ig) sns.push({ kind: 'ig', label: '인스타그램', url: ig });
+    var fb = url($('facebook').value);   if (fb) sns.push({ kind: 'fb', label: '페이스북', url: fb });
     var bl = url($('blog').value);        if (bl) sns.push({ kind: 'blog', label: '블로그', url: bl });
     var yt = url($('youtube').value);     if (yt) sns.push({ kind: 'yt', label: '유튜브', url: yt });
     var hp = url($('homepage').value);    if (hp) sns.push({ kind: 'web', label: '홈페이지', url: hp });
@@ -170,7 +177,7 @@
       name: $('name').value.trim(), title: $('title').value.trim(),
       company: $('company').value.trim(), companyEn: $('companyEn').value.trim(),
       phone: $('phone').value.trim(), office: $('office').value.trim(), fax: $('fax').value.trim(),
-      email: $('email').value.trim(), address: $('address').value.trim(),
+      email: $('email').value.trim(), address: $('address').value.trim(), mapurl: url($('mapurl').value),
       greeting: $('greeting').value.trim(), accent: $('accent').value, bg: $('bg').value, tone: $('tone').value,
       design: (document.querySelector('input[name=design]:checked') || {}).value || 'editorial',
       site: $('site').value.trim().replace(/\/+$/,''), kakao: $('kakao').value.trim(),
@@ -222,6 +229,9 @@
 
 // SNS 앱 아이콘 (흰 글리프, 배경은 CSS에서 브랜드 색)
   var APP = {
+    fb: '<svg viewBox="0 0 24 24"><path fill="#fff" d="M13.6 21v-7.5h2.5l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.5V4.4c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.4H8.2v3h2.5V21z"/></svg>',
+    kch: '<svg viewBox="0 0 24 24"><path fill="#191919" d="M12 4C7 4 3 7.2 3 11.1c0 2.5 1.7 4.7 4.2 6l-.9 3.3c-.1.3.2.5.5.4l3.9-2.6c.4 0 .9.1 1.3.1 5 0 9-3.2 9-7.2S17 4 12 4z"/><text x="12" y="13.2" text-anchor="middle" font-family="Arial,sans-serif" font-size="4.6" font-weight="900" fill="#FEE500">TALK</text></svg>',
+    map: '<svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2.8c-3.9 0-7 3-7 6.8 0 5 7 11.6 7 11.6s7-6.6 7-11.6c0-3.8-3.1-6.8-7-6.8z"/><path fill="#03C75A" d="M9.3 6.6h1.9l2 3v-3h1.9v6h-1.9l-2-3v3H9.3z"/></svg>',
     ig: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.7"/><circle cx="16.9" cy="7.1" r="1.1" fill="#fff" stroke="none"/></svg>',
     blog: '<svg viewBox="0 0 24 24"><text x="12" y="15.8" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9.6" font-weight="900" fill="#fff">blog</text></svg>',
     yt: '<svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12.5" rx="4" fill="#fff"/><path d="M10.2 9.3v6l5.1-3z" fill="#FF0033"/></svg>',
@@ -247,7 +257,7 @@
     if (d.office) rows.push('<a class="row" href="tel:' + digits(d.office) + '">' + I.office + '<span>' + esc(d.office) + '</span></a>');
     if (d.fax) rows.push('<div class="row">' + I.fax + '<span>' + esc(d.fax) + ' (FAX)</span></div>');
     if (d.email) rows.push('<a class="row" href="mailto:' + esc(d.email) + '">' + I.mail + '<span>' + esc(d.email) + '</span></a>');
-    if (d.address) rows.push('<a class="row" href="https://map.naver.com/p/search/' + encodeURIComponent(d.address) + '" target="_blank" rel="noopener">' + I.pin + '<span>' + esc(d.address) + '</span></a>');
+    if (d.address) rows.push('<a class="row" href="' + esc(d.mapurl || ('https://map.naver.com/p/search/' + encodeURIComponent(d.address))) + '" target="_blank" rel="noopener">' + I.pin + '<span>' + esc(d.address) + '</span></a>');
     if (d.homepage) rows.push('<a class="row" href="' + esc(d.homepage) + '" target="_blank" rel="noopener">' + I.web + '<span>' + esc(d.homepage.replace(/^https?:\/\//,'').replace(/\/$/,'')) + '</span></a>');
 
     var sns = d.sns.length ? '<div class="sns">' + d.sns.map(function(s){
@@ -333,8 +343,9 @@
 '  .hero{padding:26px 0 0;position:relative;z-index:2}',
 '  .ph{position:relative;width:176px;height:176px;margin:0 auto}',
 '  .ph::before{content:"";position:absolute;inset:12px -14px -14px 12px;border:2px solid var(--accent);border-radius:4px}',
-'  .ph img,.ph .ini{position:relative;width:100%;height:100%;object-fit:cover;border-radius:22px;transform:rotate(-5deg);box-shadow:0 12px 28px rgba(0,0,0,.22);background:#d9d6d0}',
-'  .ph .ini{display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;color:#fff;background:var(--ink)}',
+'  .fr{position:relative;width:100%;height:100%;border-radius:22px;overflow:hidden;transform:rotate(-5deg);box-shadow:0 12px 28px rgba(0,0,0,.22);background:#d9d6d0}',
+'  .fr img,.fr .ini{display:block;width:100%;height:100%;object-fit:cover;transform:rotate(5deg) scale(1.1)}',
+'  .fr .ini{display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;color:#fff;background:#111}',
 '  .lower{padding:34px 22px 34px;text-align:center;flex:1}',
 (two ? '  .lower{background:var(--tone);color:#fff;margin-top:-60px;padding-top:96px;--ink:#fff;--sub:rgba(255,255,255,.75);--hair:rgba(255,255,255,.22)}' : ''),
 '  .name{font-size:34px;font-weight:800;letter-spacing:.01em;line-height:1.1;text-transform:uppercase;color:var(--ink);word-break:keep-all}',
@@ -346,13 +357,16 @@
 '  .list{margin-top:20px;border-top:1px solid var(--hair);text-align:left}',
 '  .row{display:flex;align-items:center;gap:14px;padding:11px 2px;border-bottom:1px solid var(--hair);color:var(--ink);text-decoration:none;font-size:14px;font-weight:600;letter-spacing:.02em}',
 '  .row svg{width:34px;height:34px;padding:8px;border-radius:50%;background:' + (two ? '#fff' : 'var(--accent)') + ';color:' + (two ? 'var(--tone)' : '#fff') + ';stroke-width:2}',
-'  .row span{word-break:break-all}',
+'  .row span{word-break:keep-all;overflow-wrap:anywhere}',
 '  .sns{margin-top:22px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap}',
 '  .sn{display:grid;justify-items:center;gap:7px;text-decoration:none;color:var(--ink);font-family:Pretendard,sans-serif;font-size:11.5px;font-weight:600}',
 '  .sn i{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.14)}',
 '  .sn i svg{width:30px;height:30px}',
 '  .sn i.ig{background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fd5949 45%,#d6249f 60%,#285AEB 90%)}',
 '  .sn i.blog{background:#03C75A}',
+'  .sn i.map{background:#03C75A}',
+'  .sn i.fb{background:#1877F2}',
+'  .sn i.kch{background:#FEE500}',
 '  .sn i.yt{background:#FF0033}',
 '  .sn i.web{background:#111}',
 '  .acts{margin-top:20px;display:grid;gap:10px}',
@@ -377,7 +391,7 @@
 '    <div class="brand">' + (src.logo ? '<img src="' + src.logo + '" alt="' + esc(d.company) + ' 로고">' : '<p class="co">' + esc(d.company) + '</p>' + (d.companyEn ? '<p class="cosub">' + esc(d.companyEn) + '</p>' : '')) + '</div>',
 '    <nav class="ic">' + topIcons + '</nav>',
 '  </header>',
-'  <div class="hero"><div class="ph">' + (src.photo ? '<img src="' + src.photo + '" alt="' + esc(d.name) + ' 사진">' : '<div class="ini">' + initials + '</div>') + '</div></div>',
+'  <div class="hero"><div class="ph"><div class="fr">' + (src.photo ? '<img src="' + src.photo + '" alt="' + esc(d.name) + ' 사진">' : '<div class="ini">' + initials + '</div>') + '</div></div></div>',
 '  <section class="lower">',
 '    <h1 class="name">' + esc(d.name) + '</h1>',
 (d.title ? '    <p class="role">' + esc(d.title) + '</p>' : ''),
@@ -414,7 +428,7 @@ kakaoBlock,
     if (d.email) lines.push('EMAIL;TYPE=INTERNET:' + d.email);
     if (d.address) lines.push('ADR;TYPE=WORK:;;' + vEsc(d.address) + ';;;;');
     if (d.site) lines.push('URL:' + d.site);
-    d.sns.forEach(function(s){ lines.push('URL:' + s.url); });
+    d.sns.forEach(function(s){ if (s.kind !== 'map' && s.kind !== 'kch') lines.push('URL:' + s.url); });
     lines.push('END:VCARD');
     return lines.join('\r\n') + '\r\n';
   }
