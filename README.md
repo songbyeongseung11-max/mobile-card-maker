@@ -3,6 +3,9 @@
 이름과 전화번호만 넣으면 **카톡으로 보내는 모바일 명함**을 만들어 주는 작은 도구예요.
 설치도, 서버도, 코딩도 필요 없어요. 만들기 페이지에서 정보를 넣고 zip 파일을 받아 무료 호스팅에 올리면 끝이에요.
 
+- **만들기 페이지**: https://songbyeongseung11-max.github.io/mobile-card-maker/
+- **완성 예시 보기** (가상의 인물): https://songbyeongseung11-max.github.io/mobile-card-maker/example/
+
 받는 사람은 링크 하나로 이렇게 할 수 있어요.
 
 - **연락처 저장하기**: 이름 · 회사 · 직함 · 번호 · 이메일이 채워진 저장 화면이 바로 떠요 (아이폰 · 안드로이드)
